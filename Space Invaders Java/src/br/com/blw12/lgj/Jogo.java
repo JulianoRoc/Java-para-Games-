@@ -22,7 +22,9 @@ public class Jogo extends JFrame {
     private BufferedImage buffer;
     private boolean[] controleTecla = new boolean[5];
 
-    public Jogo() {
+    public Jogo(MenuInicial menu) {
+        this.menu = menu;
+
         this.addKeyListener(new KeyListener() {
 
             @Override
@@ -58,6 +60,7 @@ public class Jogo extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setSize(JANELA_LARGURA, JANELA_ALTURA);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -125,7 +128,9 @@ public class Jogo extends JFrame {
 
     private Random rand = new Random();
 
-    private void carregarJogo() {
+    private MenuInicial menu;
+
+    public void carregarJogo() {
         tanque = new Tanque();
         tanque.setVel(3);
         tanque.setAtivo(true);
@@ -169,6 +174,18 @@ public class Jogo extends JFrame {
         long prxAtualizacao = 0;
 
         while (true) {
+            if (System.currentTimeMillis() >= prxAtualizacao) {
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(0, 0, JANELA_LARGURA, JANELA_ALTURA);
+
+                if (vidas <= 0) {
+                    JOptionPane.showMessageDialog(this, "Você perdeu todas as vidas!");
+                    this.dispose();
+                    menu.setVisible(true);
+                    return;
+                }
+            }
+
             if (System.currentTimeMillis() >= prxAtualizacao) {
                 g2d.setColor(Color.BLACK);
                 g2d.fillRect(0, 0, JANELA_LARGURA, JANELA_ALTURA);
@@ -356,11 +373,5 @@ public class Jogo extends JFrame {
         tiro.setAtivo(true);
         tiro.setPx(inimigo.getPx() +  inimigo.getLargura() / 2 - tiro.getLargura() / 2);
         tiro.setPy(inimigo.getPy() +  inimigo.getAltura());
-    }
-
-    public static void main(String[] args) {
-        Jogo jogo = new Jogo();
-        jogo.carregarJogo();
-        jogo.iniciarJogo();
     }
 }
